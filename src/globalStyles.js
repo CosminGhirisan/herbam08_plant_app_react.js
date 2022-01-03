@@ -20,7 +20,7 @@ body {
    font-family: 'Roboto', sans-serif;
    font-size: ${palette.FONTSIZE_M};
    font-weight: 300;
-   background: linear-gradient(160deg, rgba(17,73,59,1) 7%, rgba(183,250,233,.4) 100%);
+   background: linear-gradient(160deg, #277e68 0%, #bff0e466 100%);
 }
 `
 

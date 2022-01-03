@@ -1,12 +1,11 @@
 import React from 'react'
 
-
-const Home = () => {
+const Profile = () => {
    return (
       <h1>
-         Main
+         Profile
       </h1>
    )
 }
 
-export default Home
+export default Profile
