@@ -1,10 +1,16 @@
 import React from 'react'
 
-const Profile = () => {
+const Profile = ({ signUserOut }) => {
+   const isAuth = localStorage.getItem("isAuth");
    return (
-      <h1>
-         Profile
-      </h1>
+      <>
+         {!isAuth ? window.location.pathname = "/login" :
+         <>
+            <h1>Profile</h1>
+            <button onClick={signUserOut}>Log Out</button>
+         </>
+         }
+      </>
    )
 }
 

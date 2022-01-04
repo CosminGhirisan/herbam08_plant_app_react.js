@@ -144,6 +144,7 @@ const Form = styled.form`
 `;
 
 const AddPlant = () => {
+   const isAuth = localStorage.getItem("isAuth");
 
    const showPreview = (event) => {
       if(event.target.files.length > 0){
@@ -159,49 +160,53 @@ const AddPlant = () => {
 
    return (
       <Container>
-         <h1>Add A New Plant</h1>
-         <Form>
-            <ul>
-               <li >
-                  <input type="text" name="Species" placeholder='Plant Species*' className='lineBorderFull'/>
-               </li>
-               <li >
-                  <input  type="text" name="Name" placeholder='Plant Name'className='lineBorder'/>
-                  <input  type="text" name="Age" placeholder='Age (Optional)'className='lineBorder'/>
-               </li>
-               <li>
-                  <textarea name="Information" id="" cols="30" rows="5" placeholder='Information about your plant (Optional)'></textarea>
-               </li>
-               <li>
-                  <div>
-                     <select id="light" name="light">
-                        <option value="light-less">Less Light</option>
-                        <option value="light-moderate">Moderate Light</option>
-                        <option value="light-often">Sun Light</option>
-                     </select>
-                  </div>
-                  <div>
-                     <select id="watering" name="watering">
-                        <option value="water-less">Less Water</option>
-                        <option value="water-moderate">Moderate Water</option>
-                        <option value="water-often">Often Water</option>
-                     </select>
-                  </div>
-               </li>
-               <li>
-                  <div className="form-input">
-                     <div id="preview">
-
+         {!isAuth ? window.location.pathname = "/login" :
+         <>
+            <h1>Add A New Plant</h1>
+            <Form>
+               <ul>
+                  <li >
+                     <input type="text" name="Species" placeholder='Plant Species*' className='lineBorderFull'/>
+                  </li>
+                  <li >
+                     <input  type="text" name="Name" placeholder='Plant Name'className='lineBorder'/>
+                     <input  type="text" name="Age" placeholder='Age (Optional)'className='lineBorder'/>
+                  </li>
+                  <li>
+                     <textarea name="Information" id="" cols="30" rows="5" placeholder='Information about your plant (Optional)'></textarea>
+                  </li>
+                  <li>
+                     <div>
+                        <select id="light" name="light">
+                           <option value="light-less">Less Light</option>
+                           <option value="light-moderate">Moderate Light</option>
+                           <option value="light-often">Sun Light</option>
+                        </select>
                      </div>
-                     <label htmlFor="file-id" id="upload-btn">Upload Image</label>
-                     <input type="file" multiple id='file-id' accept='image/*' onChange={(event) => showPreview(event)} />
-                  </div>
-               </li>
-               <li>
-                  <button>Add Plant</button>
-               </li>
-            </ul>
-         </Form>
+                     <div>
+                        <select id="watering" name="watering">
+                           <option value="water-less">Less Water</option>
+                           <option value="water-moderate">Moderate Water</option>
+                           <option value="water-often">Often Water</option>
+                        </select>
+                     </div>
+                  </li>
+                  <li>
+                     <div className="form-input">
+                        <div id="preview">
+
+                        </div>
+                        <label htmlFor="file-id" id="upload-btn">Upload Image</label>
+                        <input type="file" multiple id='file-id' accept='image/*' onChange={(event) => showPreview(event)} />
+                     </div>
+                  </li>
+                  <li>
+                     <button>Add Plant</button>
+                  </li>
+               </ul>
+            </Form>
+         </>
+         }
       </Container>
    )
 }

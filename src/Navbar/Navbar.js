@@ -85,7 +85,7 @@ const Navbar = () => {
       <Container>
          <MainBtn>
             <Link to="/">
-            <img src={logo} width="50px" height="auto"/>
+               <img src={logo} width="50px" height="auto"/>
             </Link>
          </MainBtn>
          <AddBtn>

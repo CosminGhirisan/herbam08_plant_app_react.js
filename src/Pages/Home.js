@@ -1,11 +1,15 @@
 import React from 'react'
 
-
 const Home = () => {
+   const isAuth = localStorage.getItem("isAuth");
+   
    return (
-      <h1>
-         Main
-      </h1>
+      <>
+         {!isAuth ? window.location.pathname = "/login" : // I can still use useNavigate, but I made it in a different way
+            <h1>Home</h1>
+         }
+
+      </>
    )
 }
 
