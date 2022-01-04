@@ -16,10 +16,17 @@ const Container = styled.div`
    align-items: center;
    justify-content: space-evenly;
    width: 100%;
-   height: 5rem;
+   height: 4rem;
    background-color: ${palette.LIGHT_COLOR};
    border-top-left-radius: 2rem;
    border-top-right-radius: 2rem;
+
+   @media only screen and (min-width: 600px) {
+      width: 400px;
+      left: 50%;
+      transform: translateX(-50%);
+
+   }
 `;
 
 const MainBtn = styled.button`

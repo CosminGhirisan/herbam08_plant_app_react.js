@@ -18,6 +18,11 @@ const Container = styled.div`
 `;
 
 const Form = styled.form`
+   width: 80%;
+
+   @media only screen and (min-width: 600px) {
+      width: 400px;
+   }
 
    ul{
       list-style:none;
@@ -28,8 +33,8 @@ const Form = styled.form`
          padding: 5px 0;
          margin-bottom: 10px;
          display: flex;
+         flex-wrap: wrap;
          justify-content: space-between;
-         
       }
 
       input{
@@ -65,6 +70,15 @@ const Form = styled.form`
          }
       }
 
+      select {
+         color: ${palette.GREEN_BG};
+         background-color: ${palette.LIGHT_COLOR};
+         border: 1px solid ${palette.GREEN_BG};
+         border-radius: 3px;
+         padding: 0.35em 1.5em 0.35em 0.5em;
+         outline: 0;
+      }
+
       button{
          width: 100%;
          background: ${palette.LIGHT_COLOR};
@@ -93,10 +107,10 @@ const Form = styled.form`
    #preview{
       padding: 20px;
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: center;
-
+      
       img{
          width: 80px;
          height: 80px;
@@ -105,8 +119,7 @@ const Form = styled.form`
    }
 
    .form-input{
-      width: 60%;
-      padding: 15px;
+      width: 100%;
       margin: 0 auto;
 
       input{
@@ -133,14 +146,13 @@ const Form = styled.form`
 const AddPlant = () => {
 
    const showPreview = (event) => {
-      console.log(event.target)
       if(event.target.files.length > 0){
-         const imageNo = event.target.files.length;
-         console.log(imageNo)
-         for(let i=0; i < imageNo; i++) {
+         const imageAmount = event.target.files.length;
+         const uploadBtn = document.getElementById("upload-btn").innerText = "Add More";
+
+         for(let i=0; i < imageAmount; i++) {
             const src = URL.createObjectURL(event.target.files[i]);
-            const preview = document.getElementById("preview")
-            preview.innerHTML += '<img src="'+src+'">';
+            const preview = document.getElementById("preview").innerHTML += '<img src="'+src+'">';
          }
       }
    }
@@ -161,15 +173,27 @@ const AddPlant = () => {
                   <textarea name="Information" id="" cols="30" rows="5" placeholder='Information about your plant (Optional)'></textarea>
                </li>
                <li>
-                  <input type="text" name="Light" placeholder='Light'/>
-                  <input type="text" name="Water" placeholder='Water'/>
+                  <div>
+                     <select id="light" name="light">
+                        <option value="light-less">Less Light</option>
+                        <option value="light-moderate">Moderate Light</option>
+                        <option value="light-often">Sun Light</option>
+                     </select>
+                  </div>
+                  <div>
+                     <select id="watering" name="watering">
+                        <option value="water-less">Less Water</option>
+                        <option value="water-moderate">Moderate Water</option>
+                        <option value="water-often">Often Water</option>
+                     </select>
+                  </div>
                </li>
                <li>
                   <div className="form-input">
                      <div id="preview">
 
                      </div>
-                     <label htmlFor="file-id">Upload Image</label>
+                     <label htmlFor="file-id" id="upload-btn">Upload Image</label>
                      <input type="file" multiple id='file-id' accept='image/*' onChange={(event) => showPreview(event)} />
                   </div>
                </li>
