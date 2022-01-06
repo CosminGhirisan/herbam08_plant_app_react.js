@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components';
 import CommingSoon from '../subComponents/CommingSoon';
 
@@ -17,16 +17,19 @@ const Container = styled.div`
 
 const Profile = ({ signUserOut }) => {
    const isAuth = localStorage.getItem("isAuth");
+
+   useEffect(() => {
+      if(!isAuth){
+         window.location.pathname = "/login"
+      }
+   }, []);
+   
    return (
-      <>
-         {!isAuth ? window.location.pathname = "/login" :
-         <Container>
-            <h1>Profile</h1>
-            <button onClick={signUserOut}>Log Out</button>
-            <CommingSoon />
-         </Container>
-         }
-      </>
+      <Container>
+         <h1>Profile</h1>
+         <button onClick={signUserOut}>Log Out</button>
+         <CommingSoon />
+      </Container>
    )
 }
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components';
 import CommingSoon from '../subComponents/CommingSoon';
 
@@ -17,17 +17,18 @@ const Container = styled.div`
 
 const Home = () => {
    const isAuth = localStorage.getItem("isAuth");
+
+   useEffect(() => {
+      if(!isAuth) {
+         window.location.pathname = "/login"
+      }
+   }, [])
    
    return (
-      <>
-         {!isAuth ? window.location.pathname = "/login" : // I can still use useNavigate, but I made it in a different way
-            <Container>
-               <h1>Home</h1>
-               <CommingSoon />
-            </Container>
-         }
-
-      </>
+      <Container>
+         <h1>Home</h1>
+         <CommingSoon />
+      </Container>
    )
 }
 

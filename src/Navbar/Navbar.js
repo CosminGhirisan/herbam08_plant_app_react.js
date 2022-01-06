@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 
 import * as palette from '../Variables';
 import logo from '../assets/images/logo.png'
-import profile from '../assets/images/profile.png'
-import { AddPlant } from '../assets/AllSvg';
+import { AddPlant, Profile } from '../assets/AllSvg';
+import { auth } from '../firebase-config';
 
 
 
@@ -29,7 +29,7 @@ const Container = styled.div`
    }
 `;
 
-const MainBtn = styled.button`
+const HomeBtn = styled.button`
    background: transparent;
    padding: 0.25rem;
    border: none;
@@ -78,16 +78,22 @@ const ProfileBtn = styled.button`
    :active{
       transform: scale(1);
    }
+
+   img{
+      border-radius: 50%;
+   }
 `;
 
 const Navbar = () => {
+   const isAuth = localStorage.getItem("isAuth");
+
    return (
       <Container>
-         <MainBtn>
+         <HomeBtn>
             <Link to="/">
                <img src={logo} width="50px" height="auto"/>
             </Link>
-         </MainBtn>
+         </HomeBtn>
          <AddBtn>
             <Link to="/add">
                <AddPlant width={50} height={50} fill="#fff" />
@@ -95,7 +101,10 @@ const Navbar = () => {
          </AddBtn>
          <ProfileBtn>
             <Link to="/profile">
-               <img src={profile} width="50px" height="auto"/>
+               {/* {isAuth 
+               ? <img src={auth.currentUser.photoURL} alt="profile_pic" width="50px" height="auto"/>
+               : <Profile fill={palette.GREEN_BG}/>
+               } */}
             </Link>
          </ProfileBtn>
       </Container>
