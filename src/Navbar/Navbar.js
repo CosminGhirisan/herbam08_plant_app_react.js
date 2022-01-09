@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import * as palette from '../Variables';
 import logo from '../assets/images/logo.png'
 import { AddPlant, Profile } from '../assets/AllSvg';
-import { auth } from '../firebase-config';
+import { useUserAuth } from '../userAuthContext';
 
 
 
@@ -85,7 +85,7 @@ const ProfileBtn = styled.button`
 `;
 
 const Navbar = () => {
-   const isAuth = localStorage.getItem("isAuth");
+   const { user } = useUserAuth();
 
    return (
       <Container>
@@ -101,10 +101,10 @@ const Navbar = () => {
          </AddBtn>
          <ProfileBtn>
             <Link to="/profile">
-               {/* {isAuth 
-               ? <img src={auth.currentUser.photoURL} alt="profile_pic" width="50px" height="auto"/>
-               : <Profile fill={palette.GREEN_BG}/>
-               } */}
+               {!user
+               ? <Profile fill={palette.GREEN_BG}/>
+               : <img src={user.photoURL} alt="profile" width="50px" height="auto"/>
+               }
             </Link>
          </ProfileBtn>
       </Container>

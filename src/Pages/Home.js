@@ -16,13 +16,6 @@ const Container = styled.div`
 `;
 
 const Home = () => {
-   const isAuth = localStorage.getItem("isAuth");
-
-   useEffect(() => {
-      if(!isAuth) {
-         window.location.pathname = "/login"
-      }
-   }, [])
    
    return (
       <Container>

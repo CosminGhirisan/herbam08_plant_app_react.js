@@ -203,12 +203,6 @@ const AddPlant = () => {
    const plantsCollectionRef = collection(db, "plants");
    let navigate = useNavigate();
 
-   useEffect(() => {
-      if(!isAuth) {
-         window.location.pathname = "/login"
-      }
-   }, []);
-
    const showPreview = (event) => {
       if(event.target.files.length > 0){
          const imageAmount = event.target.files.length;
@@ -234,7 +228,6 @@ const AddPlant = () => {
          }
       });
       navigate("/");
-      console.log(auth.currentUser.photoURL)
    }
 
    return (

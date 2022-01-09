@@ -1,11 +1,10 @@
 import React from 'react';
-import { auth, provider } from '../firebase-config';
-import { signInWithPopup } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { Google } from '../assets/AllSvg';
+
 
 import * as palette from '../Variables'
+import { Google } from '../assets/AllSvg';
+import { useUserAuth } from '../userAuthContext';
 
 const Container = styled.div`
    height: 100vh;
@@ -40,16 +39,8 @@ const Container = styled.div`
    }
 `;
 
-const Login = ({ setIsAuth }) => {
-   let navigate = useNavigate();
-
-   const signInWithGoogle = () => {
-      signInWithPopup(auth, provider).then((result) => {
-         localStorage.setItem("isAuth", true);
-         setIsAuth(true);
-         navigate("/")
-      })
-   }
+const Login = () => {
+   const { signInWithGoogle } = useUserAuth();
 
    return (
       <Container>

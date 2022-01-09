@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components';
 import CommingSoon from '../subComponents/CommingSoon';
+import { useUserAuth } from '../userAuthContext';
 
 const Container = styled.div`
    height: 90%;
@@ -15,18 +16,12 @@ const Container = styled.div`
    }
 `;
 
-const Profile = ({ signUserOut }) => {
-   const isAuth = localStorage.getItem("isAuth");
-
-   useEffect(() => {
-      if(!isAuth){
-         window.location.pathname = "/login"
-      }
-   }, []);
+const Profile = () => {
+   const { signUserOut, user } = useUserAuth();
    
    return (
       <Container>
-         <h1>Profile</h1>
+         <h1>{user && user.displayName}</h1>
          <button onClick={signUserOut}>Log Out</button>
          <CommingSoon />
       </Container>
