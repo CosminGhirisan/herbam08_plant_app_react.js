@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
-import { addDoc, collection } from "firebase/firestore"
+import { addDoc, collection,  serverTimestamp } from "firebase/firestore"
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage"
 
 import * as palette from '../Variables';
-import { db, auth } from '../firebase-config'
+import { db, auth, storage } from '../firebase-config'
 import { useNavigate } from 'react-router-dom';
 import { LightFull, LightLow, LightPartial, Water, WaterFull, WaterHalf } from '../assets/AllSvg';
 
@@ -37,6 +38,7 @@ const Form = styled.div`
       li{
          padding: 5px 0;
          margin-bottom: 10px;
+         position: relative;
       }
 
       input{
@@ -80,19 +82,6 @@ const Form = styled.div`
          padding: 0.35em 1.5em 0.35em 0.5em;
          outline: 0;
       }
-
-      button{
-         width: 100%;
-         background: ${palette.LIGHT_COLOR};
-         color: ${palette.GREEN_BG};
-         padding: 0.7rem;
-         margin-bottom: 5rem;
-         border: none;
-         border-radius: 5px;
-         font-weight: bold;
-         text-decoration: none;
-         cursor: pointer;
-      }
    }
 
    h4{
@@ -118,11 +107,15 @@ const Form = styled.div`
    }
 
    #preview{
-      padding: 20px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: center;
+      min-height: 80px;
+      border: 1px dashed #00000050;
+      border-radius: 3px;
+      padding: 10px;
+      margin-bottom: 10px;
       
       img{
          width: 80px;
@@ -134,25 +127,45 @@ const Form = styled.div`
    .form-input{
       width: 100%;
       margin: 0 auto;
+      position: relative;
 
       input{
          display: none;
       }
 
       label{
-         display: block;
-         width: 55%;
-         height: 45px;
-         margin: auto;
-         text-align: center;
-         line-height: 45px;
-         background: ${palette.GREEN_BG};
+         position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 35px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
          color: ${palette.LIGHT_COLOR};
-         font-size: ${palette.FONTSIZE_XS};
-         font-weight: bold;
-         border-radius: 5px;
+         font-size: 40px;
          cursor: pointer;
       }
+
+   }
+
+   .prepare-img-btn{
+      position: absolute;
+         bottom: 16px;
+         right: 0;
+      width: 160px;
+      background: ${palette.GREEN_BG};
+      color: ${palette.LIGHT_COLOR};
+      border: none;
+      border-radius: 0 0 3px 0;
+      margin: 0 auto;
+      padding: 5px;
+      font-size: ${palette.FONTSIZE_XS};
+      font-weight: lighter;
+      opacity: 0.7;
+      text-decoration: none;
+      cursor: pointer;
+      z-index: 10;
    }
 `;
 
@@ -193,41 +206,111 @@ const Checkboxes = styled.div`
    }
 `;
 
+const DisabledBtn = styled.button`
+   width: 100%;
+   background: #d8d8d8c0;
+   color: #ffffff80;
+   padding: 0.7rem;
+   margin-bottom: 5rem;
+   border: none;
+   border-radius: 5px;
+   text-decoration: none;
+   cursor: not-allowed;
+`;
+
+const AddPlantBtn = styled.button`
+   width: 100%;
+   background: ${palette.LIGHT_COLOR};
+   color: ${palette.GREEN_BG};
+   padding: 0.7rem;
+   margin-bottom: 5rem;
+   border: none;
+   border-radius: 5px;
+   font-weight: bold;
+   text-decoration: none;
+   cursor: pointer;
+`;
+
 const AddPlant = () => {
    const [plantSpecies, setPlantSpecies] = useState('');
    const [plantName, setPlantName] = useState("");
    const [plantLocation, setPlantLocation] = useState("");
    const [plantDescription, setPlantDescription] = useState("");
    const [careInstruction, setCareInstruction] = useState("");
-   const isAuth = localStorage.getItem("isAuth");
-   const plantsCollectionRef = collection(db, "plants");
-   let navigate = useNavigate();
+   const [light, setLight] = useState("");
+   const [water, setWater] = useState("");
+   const [images, setImages] = useState([]);
+   const [imagesPrepared, setImagesPrepared] = useState(false)
+   const imagesUrl = [];
 
+   const [progres, setProgres] = useState(0);
+   let navigate = useNavigate();
+   const plantsCollectionRef = collection(db, "plants");
+   
    const showPreview = (event) => {
+      const imgArray = [];
       if(event.target.files.length > 0){
          const imageAmount = event.target.files.length;
-         const uploadBtn = document.getElementById("upload-btn").innerText = "Add More";
-
+         document.getElementById("upload-btn").innerText = "";
+         
          for(let i=0; i < imageAmount; i++) {
             const src = URL.createObjectURL(event.target.files[i]);
-            const preview = document.getElementById("preview").innerHTML += '<img src="'+src+'">';
+            document.getElementById("preview").innerHTML += '<img src="'+src+'">';
+            imgArray.push(event.target.files[i])
          }
       }
+      setImages(images.concat(imgArray));
+      
    }
 
-   const addNewPlant = async () => {
-       await addDoc(plantsCollectionRef, {
+   const uploadImages = (img) => {
+      if(!img) return;
+
+      const storageRef = ref(storage, `/images/${auth.currentUser.displayName}/${img.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, img);
+
+      uploadTask.on(
+         "state_changed", 
+         (snapshot) => {
+            const prog = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);  
+            setProgres(prog);
+         },
+         (err) => console.log(err), 
+         () => {
+            getDownloadURL(uploadTask.snapshot.ref)
+            .then(url => {
+               imagesUrl.push(url)
+               localStorage.setItem("imagesUrl", JSON.stringify(imagesUrl))
+            })
+         }
+      );
+   }
+   
+   const prepareImages = () => {
+      images.forEach(image => uploadImages(image));
+      setImagesPrepared(true)
+   }
+   
+
+   const addNewPlant = async (e) => {      
+      await addDoc(plantsCollectionRef, {
          plantSpecies, 
          plantName, 
          plantLocation, 
          plantDescription, 
-         careInstruction, 
+         careInstruction,
+         light,
+         water,
+         timestamp: serverTimestamp(),
          author: { 
             name: auth.currentUser.displayName, 
-            id: auth.currentUser.uid 
-         }
+            id: auth.currentUser.uid
+         },
+         imagesUrl: JSON.parse(localStorage.getItem("imagesUrl"))
       });
+      // alert("New Plant was added!")
       navigate("/");
+      localStorage.removeItem("imagesUrl")
    }
 
    return (
@@ -253,19 +336,19 @@ const AddPlant = () => {
                   <div className='inlineInfo'>
                      <Checkboxes>
                         <label>
-                           <input type="radio" name="radioBtn-light"/>
+                           <input type="radio" name="radioBtn-light" value="Full Light Needed" onChange={e => setLight(e.target.value)}/>
                            <div className="icon-box">
                               <LightFull />
                            </div>
                         </label>
                         <label>
-                           <input type="radio" name="radioBtn-light"/>
+                           <input type="radio" name="radioBtn-light" value="Partial Light Needed" onChange={e => setLight(e.target.value)}/>
                            <div className="icon-box">
                               <LightPartial />
                            </div>
                         </label>
                         <label>
-                           <input type="radio" name="radioBtn-light"/>
+                           <input type="radio" name="radioBtn-light" value="Low Light Needed" onChange={e => setLight(e.target.value)}/>
                            <div className="icon-box">
                               <LightLow />
                            </div>
@@ -273,19 +356,19 @@ const AddPlant = () => {
                      </Checkboxes>
                      <Checkboxes>
                         <label>
-                           <input type="radio" name="radioBtn-water"/>
+                           <input type="radio" name="radioBtn-water" value="More Water Needed" onChange={e => setWater(e.target.value)}/>
                            <div className="icon-box">
                               <Water />
                            </div>
                         </label>
                         <label>
-                           <input type="radio" name="radioBtn-water"/>
+                           <input type="radio" name="radioBtn-water" value="Normal Water Needed" onChange={e => setWater(e.target.value)}/>
                            <div className="icon-box">
                               <WaterHalf />
                            </div>
                         </label>
                         <label>
-                           <input type="radio" name="radioBtn-water"/>
+                           <input type="radio" name="radioBtn-water" value="Less Water Needed" onChange={e => setWater(e.target.value)}/>
                            <div className="icon-box">
                               <WaterFull />
                            </div>
@@ -299,12 +382,14 @@ const AddPlant = () => {
                      <div id="preview">
 
                      </div>
-                     <label htmlFor="file-id" id="upload-btn">Upload Image</label>
-                     <input type="file" multiple id='file-id' accept='image/*' onChange={(event) => showPreview(event)} />
+                     <label htmlFor="file-id" id="upload-btn">+</label>
+                     <input type="file" multiple id='file-id' accept='image/*' onChange={event => showPreview(event)} />
                   </div>
+                  <button className='prepare-img-btn' onClick={() => prepareImages()}>Prepare Images For Upload</button>
                </li>
                <li>
-                  <button onClick={addNewPlant}>Add Plant</button>
+                  {!imagesPrepared && <DisabledBtn>Prepare Images For Upload Before Adding A New Plant</DisabledBtn>}
+                  {imagesPrepared && <AddPlantBtn onClick={addNewPlant}>Add Plant</AddPlantBtn>}
                </li>
             </ul>
          </Form>
@@ -312,4 +397,4 @@ const AddPlant = () => {
    )
 }
 
-export default AddPlant
+export default AddPlant;

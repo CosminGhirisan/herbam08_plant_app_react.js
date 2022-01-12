@@ -10,7 +10,6 @@ export function UserAuthContextProvider({ children }) {
    let navigate = useNavigate();
    const [user, setUser] = useState("")
 
-
    const signInWithGoogle = () => {
       signInWithPopup(auth, provider).then((result) => {
          localStorage.setItem("isAuth", true);
