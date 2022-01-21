@@ -10,3 +10,4 @@ export const FONTSIZE_L = '20px';
 export const DARK_COLOR = '#09090c';
 export const LIGHT_COLOR = '#BFF0E4'
 export const GREEN_BG = '#11493b';
+export const GRAY_COLOR = '#a3a3a3';

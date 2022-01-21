@@ -241,14 +241,17 @@ const AddPlant = () => {
    const [water, setWater] = useState("");
    const [images, setImages] = useState([]);
    const [imagesPrepared, setImagesPrepared] = useState(false)
+   const imgArray = [];
    const imagesUrl = [];
-
+   
    const [progres, setProgres] = useState(0);
    let navigate = useNavigate();
    const plantsCollectionRef = collection(db, "plants");
    
    const showPreview = (event) => {
-      const imgArray = [];
+      setImagesPrepared(false);
+      document.getElementById("preview").innerText = '';
+
       if(event.target.files.length > 0){
          const imageAmount = event.target.files.length;
          document.getElementById("upload-btn").innerText = "";
@@ -256,11 +259,11 @@ const AddPlant = () => {
          for(let i=0; i < imageAmount; i++) {
             const src = URL.createObjectURL(event.target.files[i]);
             document.getElementById("preview").innerHTML += '<img src="'+src+'">';
-            imgArray.push(event.target.files[i])
+            imgArray.push(event.target.files[i]);
+            uploadImages(event.target.files[i]);
          }
       }
       setImages(images.concat(imgArray));
-      
    }
 
    const uploadImages = (img) => {
@@ -281,17 +284,12 @@ const AddPlant = () => {
             .then(url => {
                imagesUrl.push(url)
                localStorage.setItem("imagesUrl", JSON.stringify(imagesUrl))
+               setImagesPrepared(true)
             })
          }
       );
    }
    
-   const prepareImages = () => {
-      images.forEach(image => uploadImages(image));
-      setImagesPrepared(true)
-   }
-   
-
    const addNewPlant = async (e) => {      
       await addDoc(plantsCollectionRef, {
          plantSpecies, 
@@ -385,10 +383,9 @@ const AddPlant = () => {
                      <label htmlFor="file-id" id="upload-btn">+</label>
                      <input type="file" multiple id='file-id' accept='image/*' onChange={event => showPreview(event)} />
                   </div>
-                  <button className='prepare-img-btn' onClick={() => prepareImages()}>Prepare Images For Upload</button>
                </li>
                <li>
-                  {!imagesPrepared && <DisabledBtn>Prepare Images For Upload Before Adding A New Plant</DisabledBtn>}
+                  {!imagesPrepared && <DisabledBtn>Add a photo</DisabledBtn>}
                   {imagesPrepared && <AddPlantBtn onClick={addNewPlant}>Add Plant</AddPlantBtn>}
                </li>
             </ul>
