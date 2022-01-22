@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, getDocs, orderBy, query } from 'firebase/firestore'
+import { Link } from 'react-router-dom';
 
 import * as palette from '../Variables';
 import { auth, db } from '../firebase-config'
@@ -39,7 +40,7 @@ const Plants = styled.div`
    }
 `;
 
-const Plant = styled.div`
+const Plant = styled(Link)`
    width: 100px;
    min-height: 140px;
    background: ${palette.LIGHT_COLOR};
@@ -49,6 +50,7 @@ const Plant = styled.div`
    align-items: center;
    border-radius: 5px;
    border: 2px solid transparent;
+   text-decoration: none;
 
    :hover{
       cursor: pointer;
@@ -72,10 +74,18 @@ const Plant = styled.div`
       text-align: center;
    }
 
-   p{
+   .plant-location{
       font-size: 11px;
       font-weight: lighter;
       color: ${palette.GRAY_COLOR};
+      margin-bottom: 5px;
+   }
+
+   .year{
+      align-self: flex-end;
+      color: ${palette.GREEN_BG};
+      font-size: 9px;
+      margin-right: 5px;
       margin-bottom: 5px;
    }
 `;
@@ -85,9 +95,11 @@ const Home = () => {
    const plantsCollectionRef = collection(db, "plants")
 
    useEffect(() => {
+      const q = query(plantsCollectionRef, orderBy("timestamp", "desc"))
+
       const getPlants = async () => {
-         const data = await getDocs(plantsCollectionRef);
-         setPlantsList(data.docs.map((doc) => ({...doc.data(), id:doc.id})));
+         const data = await getDocs(q);
+         setPlantsList(data.docs.map((doc) => ({...doc.data(), id:doc.id})));         
       }
 
       getPlants();
@@ -102,10 +114,11 @@ const Home = () => {
                return (
                   <>
                      {plant.author.id === auth.currentUser.uid && (
-                        <Plant key= {plant.id}>
+                        <Plant key={plant.id} to={plant.id}>
                            {plant.imagesUrl ? <img src={plant.imagesUrl[0]} alt="plant" /> : <img src={logo} alt='test'/>}
-                           <h5>{plant.plantName}</h5>
-                           <p>{plant.plantLocation}</p>
+                           <h5>{plant.plantName ? plant.plantName : <br/>}</h5>
+                           <p className='plant-location'>{plant.plantLocation ? plant.plantLocation : <br/>}</p>
+                           <p className='year'>{plant.year}</p>
                         </Plant>)}
                   </> 
                )

@@ -304,7 +304,8 @@ const AddPlant = () => {
             name: auth.currentUser.displayName, 
             id: auth.currentUser.uid
          },
-         imagesUrl: JSON.parse(localStorage.getItem("imagesUrl"))
+         imagesUrl: JSON.parse(localStorage.getItem("imagesUrl")),
+         year: new Date().getFullYear()
       });
       // alert("New Plant was added!")
       navigate("/");

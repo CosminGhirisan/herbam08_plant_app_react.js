@@ -9,6 +9,7 @@ import AddPlant from "./Pages/AddPlant";
 import Profile from "./Pages/Profile"
 import ProtectedRoute from './Components/ProtectedRoute'
 import { UserAuthContextProvider } from "./userAuthContext";
+import PlantPage from "./Pages/PlantPage";
 
 
 const Container = styled.div`
@@ -39,6 +40,13 @@ function App() {
               <Profile/>
             </ProtectedRoute>
           }/>
+          <Route 
+            path=":plantId" element= {
+              <ProtectedRoute>
+                <PlantPage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </UserAuthContextProvider>
     </Container>
