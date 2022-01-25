@@ -355,7 +355,7 @@ const AddPlant = () => {
                      </Checkboxes>
                      <Checkboxes>
                         <label>
-                           <input type="radio" name="radioBtn-water" value="More Water Needed" onChange={e => setWater(e.target.value)}/>
+                           <input type="radio" name="radioBtn-water" value="Less Water Needed" onChange={e => setWater(e.target.value)}/>
                            <div className="icon-box">
                               <Water />
                            </div>
@@ -367,7 +367,7 @@ const AddPlant = () => {
                            </div>
                         </label>
                         <label>
-                           <input type="radio" name="radioBtn-water" value="Less Water Needed" onChange={e => setWater(e.target.value)}/>
+                           <input type="radio" name="radioBtn-water" value="More Water Needed" onChange={e => setWater(e.target.value)}/>
                            <div className="icon-box">
                               <WaterFull />
                            </div>

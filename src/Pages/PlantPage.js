@@ -4,7 +4,8 @@ import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { db } from '../firebase-config';
-import * as palette from '../Variables'
+import * as palette from '../Variables';
+import { LightFull, LightLow, LightPartial, Water, WaterFull, WaterHalf } from '../assets/AllSvg';
 
 const Container = styled.div`
    height: 90%;
@@ -15,7 +16,7 @@ const Container = styled.div`
    overflow: scroll;
 
    h1{
-      margin: 3rem 0;
+      margin: 3rem 0 1.5rem 0;
       color: ${palette.GREEN_BG};
    }
 `;
@@ -23,6 +24,7 @@ const Container = styled.div`
 const SubContainer = styled.div`
    position: relative;
    width: 80%;
+   margin-bottom: 150px;
 
    @media only screen and (min-width: 600px) {
       width: 400px;
@@ -32,6 +34,27 @@ const SubContainer = styled.div`
    h1{
       display: block;
       text-align: center;
+   }
+
+   h5{
+      display: block;
+      font-style: italic;
+      font-weight: 300;
+      text-align: end;
+   }
+
+   h4{
+      font-size: ${palette.FONTSIZE_M};
+      margin-top: 20px;
+   }
+
+   p{
+      text-align: justify;
+      font-size: 13px;
+
+      span{
+         font-weight: 600;
+      }
    }
 
    img{
@@ -83,6 +106,7 @@ const Slideshow = styled.div`
 
    img{
       border-radius: 5px;
+      object-fit: contain;
    }
 
    .prev, 
@@ -160,7 +184,32 @@ const PlantPage = () => {
                })}
                <a className="prev" onClick={prevSlide}>&#10094;</a>
                <a className='next' onClick={nextSlide}>&#10095;</a>
-            </Slideshow>   
+            </Slideshow>
+            <h5>{plant.plantSpecies}</h5>
+            <h4>Plant Description</h4>
+            <p>{plant.plantDescription && plant.plantDescription.length > 1 ? plant.plantDescription : "-"}</p>
+            <h4>Plant Care</h4>
+            <p>{plant.careInstruction && plant.careInstruction.length > 1 ? plant.careInstruction : "-"}</p>
+            <p>
+               <span>Water:</span> {plant.water} (
+               {plant.water === "Less Water Needed" 
+                  ? <Water height="20px" width="20px"/> 
+                  : plant.water === "Normal Water Needed" 
+                  ? <WaterHalf height="20px" width="20px"/> 
+                  : plant.water === "More Water Needed"
+                  ? <WaterFull height="20px" width="20px"/>
+                  : "No information given"})
+            </p>
+            <p>
+               <span>Light:</span> {plant.light} (
+               {plant.light === "Full Light Needed" 
+                  ? <LightFull height="20px" width="20px"/> 
+                  : plant.light === "Partial Light Needed" 
+                  ? <LightPartial height="20px" width="20px"/> 
+                  : plant.light === "Less Light Needed" 
+                  ? <LightLow height="20px" width="20px"/>
+                  : "No information given"})
+            </p>
          </SubContainer>
       </Container>
    )

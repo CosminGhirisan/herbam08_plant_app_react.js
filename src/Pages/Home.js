@@ -59,7 +59,7 @@ const Plant = styled(Link)`
 
    img{
       display: block;
-      width: 90px;
+      width: 70px;
       height: 90px;
       /* background: #9c9cee; */
       border-radius: 15px;
