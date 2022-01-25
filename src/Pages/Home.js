@@ -41,16 +41,22 @@ const Plants = styled.div`
 `;
 
 const Plant = styled(Link)`
-   width: 100px;
-   min-height: 140px;
+   width: 144px;
+   min-height: 200px;
    background: ${palette.LIGHT_COLOR};
-   margin: 10px;
+   margin: 3px;
    display: flex;
    flex-direction: column;
    align-items: center;
    border-radius: 5px;
    border: 2px solid transparent;
    text-decoration: none;
+
+   @media only screen and (min-width: 500px) {
+      width: 118px;
+      min-height: 140px;
+      margin: 5px;
+   }
 
    :hover{
       cursor: pointer;
@@ -59,12 +65,17 @@ const Plant = styled(Link)`
 
    img{
       display: block;
-      width: 70px;
-      height: 90px;
-      /* background: #9c9cee; */
-      border-radius: 15px;
+      width: 130px;
+      height: 150px;
+      border-radius: 10px 10px 2px 2px;
       margin-top: 5px;
       overflow: hidden;
+      object-fit: cover;
+
+      @media only screen and (min-width: 500px) {
+      width: 110px;
+      height: 130px;
+      }
    }
 
    h5{

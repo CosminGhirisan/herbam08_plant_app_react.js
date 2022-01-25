@@ -20,6 +20,7 @@ const Container = styled.div`
    background-color: ${palette.LIGHT_COLOR};
    border-top-left-radius: 2rem;
    border-top-right-radius: 2rem;
+   z-index: 10;
 
    @media only screen and (min-width: 600px) {
       width: 400px;
